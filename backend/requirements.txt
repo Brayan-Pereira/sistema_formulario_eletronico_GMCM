@@ -1,0 +1,40 @@
+# =============================================================================
+# DEPENDÊNCIAS — SISTEMA DE FORMULÁRIOS ELETRÔNICOS (GUARDA MUNICIPAL)
+# =============================================================================
+
+# --- Framework Web ---
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+
+# --- Banco de Dados ---
+sqlalchemy==2.0.36
+
+# --- Autenticação e Segurança ---
+bcrypt==4.2.1
+python-jose[cryptography]==3.3.0
+
+# --- Upload de Arquivos (multipart/form-data) ---
+python-multipart==0.0.20
+
+# --- Geração de QR Code ---
+qrcode[pil]==8.0
+
+# --- Geração de PDF (formulários preenchidos sem coordenadas) ---
+reportlab==4.2.5
+
+# --- Processamento de PDF (extração de campos — texto nativo) ---
+pdfplumber==0.11.4
+
+# --- Processamento de PDF (overlay de texto, AcroForm) ---
+pymupdf==1.24.13
+
+# --- OCR (fallback para PDFs escaneados) ---
+# pytesseract==0.3.13     # Requer Tesseract instalado separadamente no SO
+# Pillow já incluído via qrcode[pil] e é necessário para pytesseract
+
+# Descomente as linhas abaixo se desejar suporte a OCR:
+# pytesseract==0.3.13
+# easyocr==1.7.2           # Alternativa ao pytesseract, mais pesada mas sem instalar Tesseract
+
+# --- Carregamento de variáveis de ambiente ---
+python-dotenv==1.0.1

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a3a6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GM Formulários">
+  <title>Guarda Municipal — Formulários</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================================================================
+       BARRA SUPERIOR (oculta na tela de auth)
+       ================================================================ -->
+  <header class="app-header d-none" id="app-header">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <span id="header-title">Guarda Municipal</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="btn-dark-mode" title="Alternar tema" aria-label="Alternar tema escuro">🌙</button>
+      <button class="btn-icon d-none" id="btn-admin-panel" title="Painel Admin" aria-label="Painel Administrador">⚙️</button>
+      <button class="btn-icon" id="btn-logout" title="Sair" aria-label="Sair do sistema">🚪</button>
+    </div>
+  </header>
+
+  <!-- ================================================================
+       CONTEÚDO PRINCIPAL
+       ================================================================ -->
+  <main class="main-content" id="main-content">
+
+    <!-- ---------------------------------------------------------------
+         VIEW: LOGIN
+         --------------------------------------------------------------- -->
+    <div id="view-login" class="view">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-logo">
+            <div class="shield">🛡️</div>
+            <h1>GUARDA MUNICIPAL</h1>
+            <p>Sistema de Formulários Eletrônicos</p>
+          </div>
+
+          <form id="form-login" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="login-matricula">Matrícula / RE<span class="required">*</span></label>
+              <input class="form-control" type="text" id="login-matricula"
+                     placeholder="Digite sua matrícula"
+                     autocomplete="username" autocorrect="off"
+                     autocapitalize="characters" spellcheck="false"
+                     inputmode="text" required>
+              <span class="form-error">Informe sua matrícula.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="login-senha">Senha<span class="required">*</span></label>
+              <input class="form-control" type="password" id="login-senha"
+                     placeholder="Digite sua senha"
+                     autocomplete="current-password" required>
+              <span class="form-error">Informe sua senha.</span>
+            </div>
+
+            <button class="btn btn-primary mt-2" type="submit" id="btn-login">
+              <span>Entrar no Sistema</span>
+            </button>
+          </form>
+
+          <div class="auth-divider">ou</div>
+
+          <div class="auth-link">
+            Não tem acesso? <a href="#" id="link-to-register">Solicitar Cadastro</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         VIEW: REGISTRO
+         --------------------------------------------------------------- -->
+    <div id="view-register" class="view">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-logo">
+            <div class="shield">📋</div>
+            <h1>SOLICITAR ACESSO</h1>
+            <p>Preencha para solicitar seu cadastro</p>
+          </div>
+
+          <form id="form-register" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="reg-nome">Nome Completo<span class="required">*</span></label>
+              <input class="form-control" type="text" id="reg-nome"
+                     placeholder="SEU NOME COMPLETO"
+                     autocomplete="name" autocapitalize="words" required>
+              <span class="form-error">Informe seu nome completo.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-matricula">RE / Matrícula<span class="required">*</span></label>
+              <input class="form-control" type="text" id="reg-matricula"
+                     placeholder="EX: GM001234"
+                     autocomplete="username" autocapitalize="characters"
+                     autocorrect="off" spellcheck="false" required>
+              <span class="form-error">Informe sua matrícula.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-equipe">Viatura / Equipe</label>
+              <input class="form-control" type="text" id="reg-equipe"
+                     placeholder="EX: V-05 / RONDA NOTURNA"
+                     autocapitalize="characters" autocorrect="off">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-senha">Senha<span class="required">*</span></label>
+              <input class="form-control" type="password" id="reg-senha"
+                     placeholder="Mínimo 6 caracteres"
+                     autocomplete="new-password" required minlength="6">
+              <span class="form-error">Senha deve ter no mínimo 6 caracteres.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-senha2">Confirmar Senha<span class="required">*</span></label>
+              <input class="form-control" type="password" id="reg-senha2"
+                     placeholder="Repita a senha"
+                     autocomplete="new-password" required>
+              <span class="form-error">As senhas não coincidem.</span>
+            </div>
+
+            <button class="btn btn-primary mt-2" type="submit" id="btn-register">
+              <span>Solicitar Acesso</span>
+            </button>
+          </form>
+
+          <div class="auth-link mt-2">
+            Já tem acesso? <a href="#" id="link-to-login">Fazer Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         VIEW: AGUARDANDO APROVAÇÃO
+         --------------------------------------------------------------- -->
+    <div id="view-pending" class="view">
+      <div class="pending-container">
+        <div class="pending-icon">⏳</div>
+        <div class="pending-badge">⚠ Cadastro Pendente</div>
+        <h2 class="pending-title">Aguardando Aprovação</h2>
+        <p class="pending-subtitle" id="pending-msg">
+          Seu cadastro foi recebido e está sendo analisado pelo Administrador da base.
+          Assim que aprovado, você poderá acessar o sistema.
+        </p>
+        <p class="text-muted mt-2" id="pending-user-info"></p>
+
+        <button class="btn btn-ghost mt-3" id="btn-check-status" style="width:auto;padding:12px 28px;">
+          🔄 Verificar Status
+        </button>
+
+        <button class="btn btn-ghost mt-1" id="btn-logout-pending" style="width:auto;padding:12px 28px;">
+          Sair
+        </button>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         VIEW: DASHBOARD (Lista de Formulários)
+         --------------------------------------------------------------- -->
+    <div id="view-dashboard" class="view">
+      <!-- Saudação -->
+      <div class="card mb-2" style="background: linear-gradient(135deg, var(--navy), var(--navy-light)); color: #fff; border: none;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:48px;height:48px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">👮</div>
+          <div>
+            <div style="font-weight:800;font-size:16px;" id="dashboard-greeting">Olá, Agente!</div>
+            <div style="font-size:12px;opacity:.8;" id="dashboard-user-info">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de templates -->
+      <p class="section-title">Formulários Disponíveis</p>
+      <div id="template-list" class="template-grid">
+        <!-- Preenchido dinamicamente pelo JS -->
+        <div class="text-muted text-center" id="templates-loading" style="padding:40px 0;">
+          Carregando formulários...
+        </div>
+      </div>
+
+      <!-- Histórico -->
+      <p class="section-title mt-3">Emitidos Recentemente</p>
+      <div id="recent-list">
+        <p class="text-muted" id="recent-empty">Nenhum formulário emitido ainda.</p>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         VIEW: FORMULÁRIO DINÂMICO
+         --------------------------------------------------------------- -->
+    <div id="view-form" class="view">
+      <div id="form-dynamic-header" class="form-header">
+        <div class="form-title-main" id="form-dynamic-title">Formulário</div>
+        <div class="form-subtitle" id="form-dynamic-subtitle">Preencha todos os campos obrigatórios</div>
+        <div class="form-progress">
+          <div class="form-progress-bar" id="form-progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <form id="form-dynamic" novalidate>
+        <div id="form-fields-container">
+          <!-- Campos renderizados dinamicamente pelo JS -->
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button class="btn btn-ghost" type="button" id="btn-form-back" style="flex:0 0 auto;padding:12px 20px;">
+            ← Voltar
+          </button>
+          <button class="btn btn-success" type="submit" id="btn-form-submit">
+            <span>✓ Emitir Documento</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         VIEW: QR CODE (após emissão)
+         --------------------------------------------------------------- -->
+    <div id="view-qrcode" class="view">
+      <div class="qr-container">
+        <div class="qr-success-badge">✓ Documento Emitido com Sucesso</div>
+
+        <h2 class="qr-title" id="qr-doc-title">Termo Emitido</h2>
+        <p class="qr-subtitle">
+          Apresente o QR Code abaixo para o cidadão escanear com o celular
+          e baixar o documento instantaneamente.
+        </p>
+
+        <div class="qr-image-wrapper">
+          <img id="qr-image" src="" alt="QR Code do documento" width="220" height="220">
+        </div>
+
+        <div class="qr-info-card">
+          <div class="qr-info-row">
+            <span class="qr-label">Documento</span>
+            <span class="qr-value" id="qr-info-doc">—</span>
+          </div>
+          <div class="qr-info-row">
+            <span class="qr-label">Guarda</span>
+            <span class="qr-value" id="qr-info-guarda">—</span>
+          </div>
+          <div class="qr-info-row">
+            <span class="qr-label">Matrícula</span>
+            <span class="qr-value" id="qr-info-matricula">—</span>
+          </div>
+          <div class="qr-info-row">
+            <span class="qr-label">Emitido em</span>
+            <span class="qr-value" id="qr-info-data">—</span>
+          </div>
+        </div>
+
+        <div class="qr-url" id="qr-url-text">—</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a class="btn btn-primary" id="qr-btn-download" href="#" target="_blank" rel="noopener">
+            ⬇ Abrir / Baixar PDF
+          </a>
+          <button class="btn btn-outline" id="btn-novo-formulario">
+            + Novo Formulário
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         VIEW: PAINEL ADMINISTRADOR
+         --------------------------------------------------------------- -->
+    <div id="view-admin" class="view">
+      <h2 class="card-title mb-2">⚙️ Painel do Administrador</h2>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="admin-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-pendentes">—</div>
+          <div class="stat-label">Pendentes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-ativos">—</div>
+          <div class="stat-label">Guardas Ativos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-templates">—</div>
+          <div class="stat-label">Formulários</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-hoje">—</div>
+          <div class="stat-label">Emitidos Hoje</div>
+        </div>
+      </div>
+
+      <!-- Abas -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="aprovacoes">👥 Aprovações</button>
+        <button class="admin-tab" data-tab="templates">📄 Templates</button>
+        <button class="admin-tab" data-tab="auditoria">📋 Auditoria</button>
+        <button class="admin-tab" data-tab="guardas">🛡 Guardas</button>
+      </div>
+
+      <!-- Aba: Aprovações -->
+      <div id="tab-aprovacoes" class="admin-tab-panel active">
+        <div id="pending-users-list">
+          <p class="text-muted" id="no-pending-msg">Nenhuma aprovação pendente. ✓</p>
+        </div>
+      </div>
+
+      <!-- Aba: Templates PDF -->
+      <div id="tab-templates" class="admin-tab-panel">
+        <!-- Upload -->
+        <div class="card mb-2">
+          <div class="card-header">
+            <span class="card-title">📤 Enviar Novo Modelo</span>
+          </div>
+          <form id="form-upload-template" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="tpl-nome">Nome do Documento<span class="required">*</span></label>
+              <input class="form-control" type="text" id="tpl-nome"
+                     placeholder="EX: TERMO DE APREENSÃO" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tpl-desc">Descrição</label>
+              <input class="form-control" type="text" id="tpl-desc"
+                     placeholder="Breve descrição do formulário">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Arquivo PDF<span class="required">*</span></label>
+              <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Toque para selecionar o PDF</div>
+                <div class="upload-hint" id="upload-hint">PDF nativo ou escaneado · Máx. 20 MB</div>
+              </div>
+              <input type="file" id="tpl-file" accept=".pdf" style="display:none" required>
+            </div>
+            <button class="btn btn-primary" type="submit" id="btn-upload-template">
+              ⬆ Enviar Template
+            </button>
+          </form>
+        </div>
+
+        <!-- Lista de templates existentes -->
+        <p class="section-title">Templates Cadastrados</p>
+        <div id="admin-templates-list">
+          <p class="text-muted">Carregando...</p>
+        </div>
+      </div>
+
+      <!-- Aba: Auditoria -->
+      <div id="tab-auditoria" class="admin-tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Log de Auditoria</span>
+            <button class="btn btn-ghost" id="btn-refresh-audit" style="padding:8px 12px;font-size:12px;">
+              🔄 Atualizar
+            </button>
+          </div>
+          <div id="audit-log-list" class="log-list">
+            <p class="text-muted">Carregando logs...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aba: Guardas -->
+      <div id="tab-guardas" class="admin-tab-panel">
+        <div id="all-users-list">
+          <p class="text-muted">Carregando...</p>
+        </div>
+      </div>
+
+      <!-- Modal Editor de Campos (oculto por padrão) -->
+      <div id="modal-campos" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;overflow-y:auto;padding:20px 16px;">
+        <div style="background:var(--surface);border-radius:var(--radius-lg);max-width:600px;margin:0 auto;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h3 style="font-size:16px;font-weight:700;color:var(--navy);" id="modal-campos-title">Editar Campos</h3>
+            <button id="btn-close-modal" style="border:none;background:none;font-size:22px;cursor:pointer;color:var(--text-secondary);">✕</button>
+          </div>
+          <div id="campos-editor-list">
+            <!-- Campos renderizados pelo JS -->
+          </div>
+          <button class="btn btn-ghost mt-1" id="btn-add-campo" type="button">
+            + Adicionar Campo
+          </button>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="btn btn-ghost" id="btn-cancel-campos" type="button">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-campos" type="button">💾 Salvar Campos</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /view-admin -->
+
+  </main><!-- /main-content -->
+
+</div><!-- /app -->
+
+<!-- ================================================================
+     BANNER DE REDE OFFLINE
+     ================================================================ -->
+<div class="network-banner" id="network-banner">
+  <div class="network-dot"></div>
+  <span id="network-msg">Sem conexão — Tentando reenviar dados...</span>
+</div>
+
+<!-- ================================================================
+     CONTAINER DE TOASTS
+     ================================================================ -->
+<div id="toast-container" aria-live="polite"></div>
+
+<!-- ================================================================
+     SCRIPTS (ordem importa: módulos antes do app principal)
+     ================================================================ -->
+<script src="/static/js/network.js"></script>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/forms.js"></script>
+<script src="/static/js/admin.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
