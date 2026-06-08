@@ -110,10 +110,14 @@
       document.getElementById('qr-info-matricula').textContent = info.matricula_guarda_autoria || '—';
       const dt = info.data_criacao ? new Date(info.data_criacao).toLocaleString('pt-BR') : '—';
       document.getElementById('qr-info-data').textContent     = dt;
-      document.getElementById('qr-url-text').textContent      = info.url_download || '—';
+
+      // URL exibida e usada no QR: Drive (temporário) tem prioridade sobre URL local
+      const urlQr = info.url_drive || info.url_download || '—';
+      document.getElementById('qr-url-text').textContent = urlQr;
 
       const qrImg = document.getElementById('qr-image');
       if (info.url_qrcode) {
+        qrImg.style.display = 'block';
         qrImg.src = info.url_qrcode + '?t=' + Date.now();
         qrImg.onerror = () => {
           qrImg.alt = '(QR Code indisponível — use o link acima)';
@@ -122,7 +126,8 @@
       }
 
       const downloadBtn = document.getElementById('qr-btn-download');
-      downloadBtn.href = info.url_download || '#';
+      downloadBtn.href = info.url_drive || info.url_download || '#';
+      downloadBtn.textContent = info.url_drive ? '⬇ Abrir PDF (Google Drive)' : '⬇ Abrir / Baixar PDF';
 
       showHeader(true, 'Documento Emitido');
       showAdminButton(Auth.isAdmin());
@@ -385,6 +390,7 @@
           data_criacao: resposta.data_criacao,
           url_qrcode: resposta.url_qrcode,
           url_download: resposta.url_download,
+          url_drive: resposta.url_drive,
         });
         showToast('Documento emitido com sucesso!', 'success');
       } catch (e) {

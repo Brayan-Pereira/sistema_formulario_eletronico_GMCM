@@ -37,16 +37,19 @@ except ImportError:
     logger.warning("google-api-python-client não instalado. Drive desativado.")
 
 
-# ---------------------------------------------------------------------------
-# Configurações lidas do ambiente
-# ---------------------------------------------------------------------------
-GDRIVE_ENABLED              = os.getenv("GDRIVE_ENABLED", "false").lower() == "true"
-GDRIVE_TOKEN_FILE           = os.getenv("GDRIVE_TOKEN_FILE", "./secrets/gdrive_token.json")
-GDRIVE_OAUTH_CLIENT_FILE    = os.getenv("GDRIVE_OAUTH_CLIENT_FILE", "./secrets/gdrive_oauth_client.json")
-GDRIVE_FOLDER_ID            = os.getenv("GDRIVE_FOLDER_ID", "")
-GDRIVE_DELETE_AFTER_SECONDS = int(os.getenv("GDRIVE_DELETE_AFTER_SECONDS", "120"))
-
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+
+
+# ---------------------------------------------------------------------------
+# Leitura lazy das configurações (sempre lê do os.environ, após load_dotenv)
+# ---------------------------------------------------------------------------
+def _cfg():
+    return {
+        "enabled":      os.getenv("GDRIVE_ENABLED", "false").lower() == "true",
+        "token_file":   os.getenv("GDRIVE_TOKEN_FILE",  "./secrets/gdrive_token.json"),
+        "folder_id":    os.getenv("GDRIVE_FOLDER_ID",   ""),
+        "delete_after": int(os.getenv("GDRIVE_DELETE_AFTER_SECONDS", "120")),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +64,7 @@ def _build_service():
     if not _HAS_GOOGLE:
         raise RuntimeError("Instale: pip install google-api-python-client google-auth google-auth-oauthlib")
 
-    token_path = os.path.abspath(GDRIVE_TOKEN_FILE)
+    token_path = os.path.abspath(_cfg()["token_file"])
     if not os.path.exists(token_path):
         raise FileNotFoundError(
             f"Token OAuth não encontrado: {token_path}\n"
@@ -98,9 +101,10 @@ def upload_pdf(caminho_local: str, nome_arquivo: str) -> dict:
     """
     service = _build_service()
 
+    folder_id = _cfg()["folder_id"]
     metadata = {
         "name": nome_arquivo,
-        "parents": [GDRIVE_FOLDER_ID] if GDRIVE_FOLDER_ID else [],
+        "parents": [folder_id] if folder_id else [],
     }
 
     media = MediaFileUpload(caminho_local, mimetype="application/pdf", resumable=False)
@@ -185,11 +189,12 @@ def upload_e_agendar_delecao(caminho_pdf: str, nome_arquivo: str) -> Optional[st
     Retorna a share_url para uso no QR Code.
     Retorna None se GDRIVE_ENABLED=false ou em caso de erro.
     """
-    if not GDRIVE_ENABLED:
+    cfg = _cfg()
+    if not cfg["enabled"]:
         logger.info("Google Drive desativado (GDRIVE_ENABLED=false). Usando URL local.")
         return None
 
-    if not GDRIVE_FOLDER_ID:
+    if not cfg["folder_id"]:
         logger.warning("GDRIVE_FOLDER_ID não configurado. Drive ignorado.")
         return None
 
@@ -202,7 +207,7 @@ def upload_e_agendar_delecao(caminho_pdf: str, nome_arquivo: str) -> Optional[st
         share_url = create_share_link(file_id)
 
         # 3. Agendar deleção
-        _deletar_apos_delay(file_id, GDRIVE_DELETE_AFTER_SECONDS)
+        _deletar_apos_delay(file_id, cfg["delete_after"])
 
         return share_url
 

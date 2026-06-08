@@ -210,7 +210,7 @@ def submeter_formulario(
         token_hash_unico=resposta.token_hash_unico,
         data_criacao=resposta.data_criacao,
         status=resposta.status,
-        url_qrcode=f"{settings.CLOUDFLARE_PUBLIC_URL}/api/documents/qrcode/{token_hash}",
+        url_qrcode=f"/api/documents/qrcode/{token_hash}",
         url_download=url_download,
         url_drive=url_qr if url_qr != url_download else None,
         nome_guarda_autoria=resposta.nome_guarda_autoria,
