@@ -126,8 +126,23 @@
       }
 
       const downloadBtn = document.getElementById('qr-btn-download');
-      downloadBtn.href = info.url_drive || info.url_download || '#';
+      downloadBtn.href = info.url_drive || info.url_local || info.url_download || '#';
       downloadBtn.textContent = info.url_drive ? '⬇ Abrir PDF (Google Drive)' : '⬇ Abrir / Baixar PDF';
+
+      // Botão de impressão — usa sempre URL local para evitar depender do túnel
+      const printBtn = document.getElementById('qr-btn-print');
+      const urlLocal = info.url_local || info.url_download || '';
+      printBtn._urlLocal = urlLocal;
+
+      // Visualizador de PDF inline
+      const iframe   = document.getElementById('pdf-iframe');
+      const section  = document.getElementById('pdf-viewer-section');
+      if (urlLocal) {
+        iframe.src = urlLocal;
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
 
       showHeader(true, 'Documento Emitido');
       showAdminButton(Auth.isAdmin());
@@ -391,6 +406,7 @@
           url_qrcode: resposta.url_qrcode,
           url_download: resposta.url_download,
           url_drive: resposta.url_drive,
+          url_local: `/download/${resposta.token_hash_unico}`,
         });
         showToast('Documento emitido com sucesso!', 'success');
       } catch (e) {
@@ -405,6 +421,21 @@
 
     // --- QR Code ---
     document.getElementById('btn-novo-formulario')?.addEventListener('click', () => App.navigate('dashboard'));
+
+    // --- Impressão e fechar visualizador ---
+    document.getElementById('qr-btn-print')?.addEventListener('click', function () {
+      const url = this._urlLocal;
+      if (!url) return;
+      const win = window.open(url, '_blank');
+      if (win) win.addEventListener('load', () => win.print());
+    });
+
+    document.getElementById('pdf-viewer-close')?.addEventListener('click', () => {
+      const section = document.getElementById('pdf-viewer-section');
+      const iframe  = document.getElementById('pdf-iframe');
+      section.style.display = 'none';
+      iframe.src = '';
+    });
 
     // --- Header ---
     document.getElementById('btn-logout')?.addEventListener('click', () => {

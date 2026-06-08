@@ -411,6 +411,14 @@ select.form-control {
 [data-theme="dark"] .btn-outline { color: var(--accent-blue); border-color: var(--accent-blue); }
 .btn-outline:hover { background: var(--navy); color: #fff; }
 
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border);
+  width: 100%;
+}
+.btn-secondary:hover { background: var(--border); }
+
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
@@ -716,6 +724,37 @@ select.form-control {
 .qr-container {
   text-align: center;
   padding: 24px 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Visualizador de PDF inline
+   -------------------------------------------------------------------------- */
+.pdf-viewer-section {
+  margin-top: 24px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-align: left;
+}
+
+.pdf-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+#pdf-iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+  display: block;
+  background: #fff;
 }
 
 .qr-success-badge {

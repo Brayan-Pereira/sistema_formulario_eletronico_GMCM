@@ -287,9 +287,22 @@
           <a class="btn btn-primary" id="qr-btn-download" href="#" target="_blank" rel="noopener">
             ⬇ Abrir / Baixar PDF
           </a>
+          <button class="btn btn-secondary" id="qr-btn-print">
+            🖨️ Imprimir PDF
+          </button>
           <button class="btn btn-outline" id="btn-novo-formulario">
             + Novo Formulário
           </button>
+        </div>
+
+        <!-- Visualizador de PDF inline -->
+        <div class="pdf-viewer-section" id="pdf-viewer-section" style="display:none;">
+          <div class="pdf-viewer-header">
+            <span>Pré-visualização do Documento</span>
+            <button class="btn-icon" id="pdf-viewer-close" aria-label="Fechar visualizador">✕</button>
+          </div>
+          <iframe id="pdf-iframe" src="" title="Visualizador de PDF"
+                  allow="fullscreen" loading="lazy"></iframe>
         </div>
       </div>
     </div>
