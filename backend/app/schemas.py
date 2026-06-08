@@ -106,6 +106,7 @@ class FormularioResponse(BaseModel):
     status:           str
     url_qrcode:       Optional[str] = None
     url_download:     Optional[str] = None
+    url_drive:        Optional[str] = None   # Link temporário no Google Drive (TTL: 2min)
 
     # Autoria imutável
     nome_guarda_autoria:      str

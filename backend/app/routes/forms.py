@@ -17,7 +17,9 @@ from ..schemas import (
 from ..services.audit import registrar_log
 from ..services.pdf_generator import gerar_pdf_preenchido
 from ..services.qr_generator import gerar_qrcode
+from ..services.drive_service import upload_e_agendar_delecao
 from ..config import settings
+import os
 import secrets
 
 router = APIRouter()
@@ -171,8 +173,12 @@ def submeter_formulario(
     # URL pública para download (via Cloudflare Tunnel ou localhost)
     url_download = f"{settings.CLOUDFLARE_PUBLIC_URL}/download/{token_hash}"
 
-    # Gera QR Code apontando para a URL de download
-    caminho_qr = gerar_qrcode(url=url_download, token_hash=token_hash)
+    # Tenta enviar ao Google Drive e obter link temporário para o QR Code
+    nome_arquivo_drive = f"{template.nome_documento.replace(' ', '_')}_{token_hash[:8]}.pdf"
+    url_qr = upload_e_agendar_delecao(caminho_pdf, nome_arquivo_drive) or url_download
+
+    # Gera QR Code apontando para Drive (se disponível) ou URL local
+    caminho_qr = gerar_qrcode(url=url_qr, token_hash=token_hash)
 
     # Persiste a resposta com autoria imutável
     resposta = RespostaFormulario(
@@ -206,6 +212,7 @@ def submeter_formulario(
         status=resposta.status,
         url_qrcode=f"{settings.CLOUDFLARE_PUBLIC_URL}/api/documents/qrcode/{token_hash}",
         url_download=url_download,
+        url_drive=url_qr if url_qr != url_download else None,
         nome_guarda_autoria=resposta.nome_guarda_autoria,
         matricula_guarda_autoria=resposta.matricula_guarda_autoria,
     )

@@ -1,0 +1,27 @@
+# Ambiente virtual
+.venv/
+
+# Variáveis de ambiente (NUNCA versionar)
+.env
+
+# Credenciais Google (NUNCA versionar)
+secrets/*.json
+
+# Banco de dados local
+storage/*.db
+storage/generated/
+storage/qrcodes/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini
