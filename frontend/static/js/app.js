@@ -408,6 +408,11 @@
           url_drive: resposta.url_drive,
           url_local: `/download/${resposta.token_hash_unico}`,
         });
+        // Download automático do PDF na máquina local imediatamente após emissão
+        _autoDownloadPDF(
+          `/download/${resposta.token_hash_unico}`,
+          `${tpl.nome_documento}_${resposta.matricula_guarda_autoria}.pdf`
+        );
         showToast('Documento emitido com sucesso!', 'success');
       } catch (e) {
         showLoading(false);
@@ -458,6 +463,17 @@
     btn.setAttribute('aria-busy', loading ? 'true' : 'false');
     if (loading) btn.classList.add('btn-loading');
     else         btn.classList.remove('btn-loading');
+  }
+
+  function _autoDownloadPDF(url, filename) {
+    // Cria link temporário e clica para disparar download automático
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => document.body.removeChild(a), 1000);
   }
 
   // ---------------------------------------------------------------------------

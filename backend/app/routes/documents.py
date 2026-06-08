@@ -50,7 +50,7 @@ def download_pdf(token_hash: str, db: Session = Depends(get_db)):
         resposta.caminho_pdf_final,
         media_type="application/pdf",
         filename=nome_arquivo,
-        headers={"Content-Disposition": f'inline; filename="{nome_arquivo}"'},
+        headers={"Content-Disposition": f'attachment; filename="{nome_arquivo}"'},
     )
 
 
