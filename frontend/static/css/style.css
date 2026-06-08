@@ -262,30 +262,30 @@ textarea.form-control {
    -------------------------------------------------------------------------- */
 .password-wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  display: block;
 }
 
 .password-wrapper .form-control {
-  padding-right: 52px; /* espaço para o botão */
+  padding-right: 52px;
 }
 
 .password-toggle {
   position: absolute;
   right: 0;
   top: 0;
-  bottom: 0;
-  width: 52px;
+  height: 100%;
+  width: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-muted);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-secondary);
+  z-index: 2;
   transition: color .15s;
   -webkit-tap-highlight-color: transparent;
+  padding: 0;
 }
 
 .password-toggle:hover,
@@ -302,13 +302,18 @@ textarea.form-control {
 .eye-icon {
   width: 20px;
   height: 20px;
+  display: inline-block !important; /* override global svg { display: block } */
   pointer-events: none;
+  flex-shrink: 0;
 }
 
 /* Alterna ícone conforme estado */
-.eye-closed { display: none; }
-.password-toggle.is-visible .eye-open  { display: none; }
-.password-toggle.is-visible .eye-closed { display: block; }
+.eye-closed { display: none !important; }
+.password-toggle.is-visible .eye-open  { display: none !important; }
+.password-toggle.is-visible .eye-closed { display: inline-block !important; }
+
+/* form-error quando input está dentro do wrapper */
+.password-wrapper .form-control.error ~ .form-error { display: block; }
 
 select.form-control {
   cursor: pointer;
@@ -329,7 +334,8 @@ select.form-control {
   margin-top: 4px;
   display: none;
 }
-.form-control.error + .form-error { display: block; }
+.form-control.error + .form-error,
+.password-wrapper:has(.form-control.error) + .form-error { display: block; }
 
 /* Checkbox */
 .form-check {
