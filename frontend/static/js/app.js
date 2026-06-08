@@ -259,10 +259,28 @@
   }
 
   // ---------------------------------------------------------------------------
+  // Toggle de visibilidade de senha
+  // ---------------------------------------------------------------------------
+
+  function initPasswordToggles() {
+    document.querySelectorAll('.password-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = btn.previousElementSibling;
+        if (!input) return;
+        const isVisible = btn.classList.toggle('is-visible');
+        input.type = isVisible ? 'text' : 'password';
+        btn.setAttribute('aria-label', isVisible ? 'Ocultar senha' : 'Mostrar senha');
+      });
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // Bindings de eventos
   // ---------------------------------------------------------------------------
 
   function bindEvents() {
+    initPasswordToggles();
+
     // --- Login ---
     document.getElementById('form-login')?.addEventListener('submit', async e => {
       e.preventDefault();
