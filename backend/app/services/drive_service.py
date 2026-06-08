@@ -2,15 +2,16 @@
 Serviço de integração com Google Drive.
 
 Fluxo:
-  1. Autentica via Service Account (escopo drive.file — menor privilégio).
+  1. Autentica via OAuth 2.0 com token pessoal (conta Gmail).
+     Execute scripts/autorizar_gdrive.py UMA VEZ para gerar secrets/gdrive_token.json.
   2. Faz upload do PDF para uma pasta dedicada no Drive.
   3. Cria link público de compartilhamento (role=reader, type=anyone).
   4. Agenda deleção automática do arquivo após GDRIVE_DELETE_AFTER_SECONDS.
-  5. Persiste estado na tabela drive_uploads para sobreviver a reinicializações.
 
 Configuração necessária no .env:
   GDRIVE_ENABLED=true
-  GDRIVE_SERVICE_ACCOUNT_FILE=./secrets/gdrive_service_account.json
+  GDRIVE_TOKEN_FILE=./secrets/gdrive_token.json
+  GDRIVE_OAUTH_CLIENT_FILE=./secrets/gdrive_oauth_client.json
   GDRIVE_FOLDER_ID=<ID da pasta no Drive>
   GDRIVE_DELETE_AFTER_SECONDS=120
 """
@@ -26,10 +27,10 @@ logger = logging.getLogger(__name__)
 # Importações opcionais (graceful degradation se não instalado)
 # ---------------------------------------------------------------------------
 try:
-    from google.oauth2 import service_account
+    from google.oauth2.credentials import Credentials
+    from google.auth.transport.requests import Request
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload
-    from googleapiclient.errors import HttpError
     _HAS_GOOGLE = True
 except ImportError:
     _HAS_GOOGLE = False
@@ -37,36 +38,53 @@ except ImportError:
 
 
 # ---------------------------------------------------------------------------
-# Configurações lidas do ambiente (sem importar settings para evitar ciclo)
+# Configurações lidas do ambiente
 # ---------------------------------------------------------------------------
-GDRIVE_ENABLED             = os.getenv("GDRIVE_ENABLED", "false").lower() == "true"
-GDRIVE_SERVICE_ACCOUNT_FILE = os.getenv("GDRIVE_SERVICE_ACCOUNT_FILE", "./secrets/gdrive_service_account.json")
-GDRIVE_FOLDER_ID           = os.getenv("GDRIVE_FOLDER_ID", "")
+GDRIVE_ENABLED              = os.getenv("GDRIVE_ENABLED", "false").lower() == "true"
+GDRIVE_TOKEN_FILE           = os.getenv("GDRIVE_TOKEN_FILE", "./secrets/gdrive_token.json")
+GDRIVE_OAUTH_CLIENT_FILE    = os.getenv("GDRIVE_OAUTH_CLIENT_FILE", "./secrets/gdrive_oauth_client.json")
+GDRIVE_FOLDER_ID            = os.getenv("GDRIVE_FOLDER_ID", "")
 GDRIVE_DELETE_AFTER_SECONDS = int(os.getenv("GDRIVE_DELETE_AFTER_SECONDS", "120"))
 
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
 
 # ---------------------------------------------------------------------------
-# Autenticação
+# Autenticação OAuth 2.0 (token pessoal)
 # ---------------------------------------------------------------------------
 
 def _build_service():
-    """Constrói o cliente autenticado da Drive API v3."""
+    """
+    Constrói o cliente autenticado da Drive API v3 usando OAuth 2.0.
+    Renova o token automaticamente se expirado.
+    """
     if not _HAS_GOOGLE:
-        raise RuntimeError("Instale: pip install google-api-python-client google-auth google-auth-httplib2")
+        raise RuntimeError("Instale: pip install google-api-python-client google-auth google-auth-oauthlib")
 
-    cred_path = os.path.abspath(GDRIVE_SERVICE_ACCOUNT_FILE)
-    if not os.path.exists(cred_path):
+    token_path = os.path.abspath(GDRIVE_TOKEN_FILE)
+    if not os.path.exists(token_path):
         raise FileNotFoundError(
-            f"Arquivo de credenciais não encontrado: {cred_path}\n"
-            "Siga os passos em README para criar a Service Account."
+            f"Token OAuth não encontrado: {token_path}\n"
+            "Execute primeiro: python scripts/autorizar_gdrive.py"
         )
 
-    credentials = service_account.Credentials.from_service_account_file(
-        cred_path, scopes=SCOPES
-    )
-    return build("drive", "v3", credentials=credentials, cache_discovery=False)
+    creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+
+    # Renova automaticamente se expirado
+    if not creds.valid:
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            # Salva o token renovado
+            with open(token_path, "w") as f:
+                f.write(creds.to_json())
+            logger.info("Token OAuth renovado automaticamente.")
+        else:
+            raise RuntimeError(
+                "Token OAuth inválido ou sem refresh_token.\n"
+                "Execute novamente: python scripts/autorizar_gdrive.py"
+            )
+
+    return build("drive", "v3", credentials=creds, cache_discovery=False)
 
 
 # ---------------------------------------------------------------------------
